@@ -3,10 +3,18 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { OrderModule } from '../order/order.module';
+import { dbConfig } from '../../../configs';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://sarang-mongo:27017/orders', { useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false }),
+    MongooseModule.forRoot(
+        dbConfig.uri,
+      {
+        useNewUrlParser: true,
+        useCreateIndex: true,
+        useFindAndModify: false,
+      },
+    ),
     OrderModule,
   ],
   controllers: [AppController],

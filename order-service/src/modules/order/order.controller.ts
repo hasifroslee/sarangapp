@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { HttpResponse } from '../../utils/http-response';
@@ -28,7 +28,7 @@ export class OrderController {
     }
   }
 
-  @Delete(':id')
+  @Put(':id/cancel')
   async cancelById(@Param('id') id: string): Promise<GetOrderDto> {
     try {
       const result = await this.orderService.cancelById(id);

@@ -14,5 +14,4 @@ import { ScheduleModule } from 'nest-schedule';
   controllers: [OrderController],
   providers: [OrderService],
 })
-
 export class OrderModule {}

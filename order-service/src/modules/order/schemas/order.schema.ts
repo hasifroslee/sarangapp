@@ -1,4 +1,5 @@
 import * as mongoose from 'mongoose';
+import { v4 as uuid } from 'uuid';
 
 export enum OrderStatus {
   CREATED = 'CREATED',
@@ -8,6 +9,7 @@ export enum OrderStatus {
 }
 
 export const OrderSchema = new mongoose.Schema({
+  _id: { type: String, default: uuid },
   user: { type: String, require: true },
   pump: { type: Number, require: true },
   price: { type: Number, require: true },

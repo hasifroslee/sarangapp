@@ -6,7 +6,7 @@ export class HttpResponse {
   static success(data: Order) {
     return {
       id: data.id.toString(),
-      user: data.name,
+      user: data.user,
       pump: data.pump,
       price: data.price,
       status: data.status,
@@ -14,17 +14,14 @@ export class HttpResponse {
   }
 
   static throwHttpError(e) {
-    const message = {
-      message: e.message,
-    };
     switch (e.constructor) {
       case EntityAlreadyExists:
-        throw new HttpException(message, HttpStatus.CONFLICT);
+        throw new HttpException(e.message, HttpStatus.CONFLICT);
       case EntityNotFound:
-        throw new HttpException(message, HttpStatus.NOT_FOUND);
+        throw new HttpException(e.message, HttpStatus.NOT_FOUND);
       default:
         Logger.error(e.message, e);
-        throw new HttpException(message, HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }
