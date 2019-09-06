@@ -7,14 +7,11 @@ import { dbConfig } from '../../../configs';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(
-        dbConfig.uri,
-      {
-        useNewUrlParser: true,
-        useCreateIndex: true,
-        useFindAndModify: false,
-      },
-    ),
+    MongooseModule.forRoot(dbConfig.uri, {
+      useNewUrlParser: true,
+      useCreateIndex: true,
+      useFindAndModify: false,
+    }),
     OrderModule,
   ],
   controllers: [AppController],

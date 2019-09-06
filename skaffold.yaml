@@ -1,0 +1,28 @@
+apiVersion: skaffold/v1beta13
+kind: Config
+build:
+  artifacts:
+  - image: orderservice
+    context: order-service
+  tagPolicy:
+    gitCommit: {}
+deploy:
+  kubectl:
+    manifests:
+    - kubernetes-manifests/order-service.yml
+profiles:
+- name: gcb
+  build:
+    googleCloudBuild:
+      projectId: sarangapp
+- name: dev
+  build:
+    local: {}
+    artifacts:
+    - image: orderservice
+      context: order-service
+      sync:
+        infer:
+        - '**/*.ts'
+      docker:
+        dockerfile: Dockerfile.dev

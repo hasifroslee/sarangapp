@@ -1,4 +1,4 @@
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { HttpService, Injectable } from '@nestjs/common';
 import { InjectSchedule, Schedule } from 'nest-schedule';
 import { InjectModel } from '@nestjs/mongoose';
@@ -18,16 +18,17 @@ enum PaymentStatus {
 export class OrderService {
   constructor(
     @InjectModel('Order') private readonly orderModel: Model<Order>,
-    @InjectSchedule() private readonly schedule: Schedule,
     private readonly httpService: HttpService,
+    @InjectSchedule() private readonly schedule: Schedule,
   ) {}
 
   /**
    * Create a new order
-   * @param data must be of type CreateOrderDto
+   * @param createOrderDto params to create the order with
    */
-  async create(data: CreateOrderDto): Promise<Order> {
-    const order = await new this.orderModel(data).save();
+  async create(createOrderDto: CreateOrderDto): Promise<Order> {
+    const order = new this.orderModel(createOrderDto);
+    await order.save();
     this.createPayment(order);
     return order;
   }

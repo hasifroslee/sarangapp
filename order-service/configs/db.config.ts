@@ -1,1 +1,1 @@
-export const uri = process.env.mongoUri || 'mongodb://localhost:27017/orders';
+export const uri = process.env.mongoUri || 'mongodb+srv://local:HLhqAB3aZEIsiP6D@sarang-rj8ni.gcp.mongodb.net/test?retryWrites=true&w=majority';
