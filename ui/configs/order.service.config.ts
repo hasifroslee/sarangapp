@@ -1,2 +1,2 @@
-export const host = process.env.ORDER_HOST || "localhost";
-export const port = process.env.ORDER_PORT || 8080;
+export const host = process.env.ORDER_HOST;
+export const port = process.env.ORDER_PORT;

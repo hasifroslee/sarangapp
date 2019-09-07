@@ -4,16 +4,17 @@
       <b-container>
         <b-row class="mb-4 text-center">
           <b-col cols="5">
-            <b-form-input
-              style="width: available"
-              ref="pumpValidation"
-              id="form-input-pump"
-              type="number"
-              :state="pumpValidation"
-              v-model="form.pump"
-              class="mb-2 mr-sm-2 mb-sm-0"
-              placeholder="Pump #"
-            ></b-form-input>
+            <b-input-group prepend="Pump #" class="mb-2 mr-sm-2 mb-sm-0">
+              <b-form-input
+                style="width: available"
+                ref="pumpValidation"
+                id="form-input-pump"
+                type="number"
+                :state="pumpValidation"
+                v-model="form.pump"
+                class="mb-2 mr-sm-2 mb-sm-0"
+              ></b-form-input>
+            </b-input-group>
           </b-col>
           <b-col cols="5">
             <b-input-group prepend="RM" class="mb-2 mr-sm-2 mb-sm-0">
@@ -22,7 +23,6 @@
                 type="number"
                 :state="priceValidation"
                 v-model="form.price"
-                placeholde="Price"
               ></b-form-input>
             </b-input-group>
           </b-col>
@@ -51,6 +51,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { host, port } from "../../configs/order.service.config";
 import axios from "axios";
 
 @Component
@@ -76,7 +77,7 @@ export default class CreateOrder extends Vue {
       : (this.priceValidation = false);
 
     if (this.priceValidation && this.pumpValidation) {
-      await axios.post("http://localhost:8080/api/orders", this.form);
+      await axios.post(`http://${host}:${port}/api/orders`, this.form);
       this.showSave = false;
       this.showClear = true;
     } else {

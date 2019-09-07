@@ -27,22 +27,6 @@ spec:
           limits:
             cpu: 300m
             memory: 500Mi
-        readinessProbe:
-          httpGet:
-            scheme: HTTP
-            path: /
-            port: 7070
-          initialDelaySeconds: 20
-          periodSeconds: 10
-          successThreshold: 1
-          failureThreshold: 3
-        livenessProbe:
-          httpGet:
-            scheme: HTTP
-            path: /
-            port: 7070
-          initialDelaySeconds: 20
-          periodSeconds: 15
 ---
 apiVersion: v1
 kind: Service
