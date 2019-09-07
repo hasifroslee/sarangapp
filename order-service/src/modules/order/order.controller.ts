@@ -28,6 +28,17 @@ export class OrderController {
     }
   }
 
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  async getAll(): Promise<OrderResponseDto[]> {
+    try {
+      const result = await this.orderService.getAll();
+      return HttpResponse.success(result);
+    } catch (e) {
+      HttpResponse.throwHttpError(e);
+    }
+  }
+
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async findById(@Param('id') id: string): Promise<OrderResponseDto> {

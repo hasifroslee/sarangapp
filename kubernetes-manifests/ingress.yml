@@ -3,12 +3,12 @@ kind: Ingress
 metadata:
   name: ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.global-static-ip-name: sarangapp-ip
 spec:
   rules:
   - http:
       paths:
-      - path: /api/*
+      - path: /
         backend:
-          serviceName: orderservice
-          servicePort: 8080
+          serviceName: sarangui
+          servicePort: 7070

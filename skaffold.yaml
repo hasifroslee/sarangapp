@@ -4,6 +4,10 @@ build:
   artifacts:
   - image: orderservice
     context: order-service
+  - image: paymentservice
+    context: payment-service
+  - image: sarangui
+    context: ui
   tagPolicy:
     gitCommit: {}
 deploy:
@@ -19,10 +23,13 @@ profiles:
   build:
     local: {}
     artifacts:
+    - image: sarangui
+      context: ui
     - image: orderservice
       context: order-service
-      sync:
-        infer:
-        - '**/*.ts'
+      docker:
+        dockerfile: Dockerfile.dev
+    - image: orderservice
+      context: order-service
       docker:
         dockerfile: Dockerfile.dev

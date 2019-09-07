@@ -2,6 +2,15 @@
 
 version: "3"
 services:
+  ui:
+    build:
+      context: ./ui
+    ports:
+    - "7070:7070"
+    environment:
+      ORDER_HOST: host.docker.internal
+    tty: true
+    container_name: sarangui
   order-service:
     build:
       context: ./order-service

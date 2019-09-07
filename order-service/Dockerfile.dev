@@ -1,7 +1,7 @@
 FROM node:12-alpine
 
-COPY . /app
 WORKDIR /app
+COPY . .
 
 EXPOSE 8080
 CMD ["npm", "run", "start"]

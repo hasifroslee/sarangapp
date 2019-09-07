@@ -2,6 +2,8 @@ FROM node:12-alpine
 
 ENV NODE_ENV production
 
+RUN npm install -g http-server
+
 WORKDIR /app
 
 COPY package*.json ./
@@ -12,5 +14,5 @@ COPY . .
 
 RUN npm run build
 
-EXPOSE 9090
-CMD ["npm", "run", "start:prod"]
+EXPOSE 7070
+CMD [ "http-server", "-p 7070", "dist" ]

@@ -70,6 +70,14 @@ describe('OrderService', () => {
     });
   });
 
+  describe('getAll', () => {
+    it('should return a list of orders', async () => {
+      mockingoose(orderModel).toReturn([mockOrder], 'find');
+      const result = await service.getAll();
+      expect(result).toMatchObject([mockOrder]);
+    });
+  });
+
   describe('cancelById', () => {
     it('should update status of order with matching id to CANCELLED', async () => {
       mockingoose(orderModel).toReturn(mockOrder, 'findOneAndUpdate');

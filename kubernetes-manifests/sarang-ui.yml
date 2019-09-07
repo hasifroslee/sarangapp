@@ -1,47 +1,37 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: orderservice
+  name: sarangui
 spec:
   selector:
     matchLabels:
-      app: orderservice
+      app: sarangui
   template:
     metadata:
       labels:
-        app: orderservice
+        app: sarangui
     spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: orderservice
+        image: sarangui
         env:
-        - name: MONGO_HOST
-          value: sarang-rj8ni.gcp.mongodb.net
-        - name: MONGO_USERNAME
-          value: vivaldi
-        - name: MONGO_PASSWORD
-          value: Y3t7bP9bT8BB6n2u
-        - name: MONGO_DB
-          value: orders
-        - name: ENVIRONMENT
-          value: production
-        - name: PAYMENT_HOST
-          value: paymentservice
+        - name: ORDER_HOST
+          value: orderservice
         ports:
-        - containerPort: 8080
+        - containerPort: 7070
         resources:
           requests:
             cpu: 200m
-            memory: 500Mi
+            memory: 300Mi
           limits:
             cpu: 300m
-            memory: 1000Mi
+            memory: 500Mi
         readinessProbe:
           httpGet:
             scheme: HTTP
-            path: /api/hello
-            port: 8080
+            path: /
+            port: 7070
           initialDelaySeconds: 20
           periodSeconds: 10
           successThreshold: 1
@@ -49,8 +39,8 @@ spec:
         livenessProbe:
           httpGet:
             scheme: HTTP
-            path: /api/hello
-            port: 8080
+            path: /
+            port: 7070
           initialDelaySeconds: 20
           periodSeconds: 15
 ---
@@ -59,11 +49,11 @@ kind: Service
 metadata:
   name: orderservice
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: orderservice
   ports:
   - name: http
-    port: 8080
-    targetPort: 8080
+    port: 7070
+    targetPort: 7070
     protocol: TCP

@@ -7,4 +7,5 @@ export interface Order extends Document {
   readonly pump: number;
   readonly price: number;
   status: OrderStatus;
+  readonly createdAt: Date;
 }

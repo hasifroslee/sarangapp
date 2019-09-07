@@ -14,4 +14,5 @@ export const OrderSchema = new mongoose.Schema({
   pump: { type: Number, require: true },
   price: { type: Number, require: true },
   status: { type: OrderStatus, default: OrderStatus.CREATED },
+  createdAt: { type: Date, default: Date.now },
 });

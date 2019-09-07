@@ -6,7 +6,7 @@ import { Order } from './interfaces/order.interface';
 import { OrderStatus } from './schemas/order.schema';
 import { AxiosResponse } from 'axios';
 import { EntityNotFound } from '../../exceptions';
-import { port, host } from '../../../configs/payment.config';
+import { port, host } from '../../../configs/payment.service.config';
 import { CreateOrderDto } from './dto/create.order.dto';
 
 enum PaymentStatus {
@@ -47,6 +47,13 @@ export class OrderService {
   }
 
   /**
+   * Get all orders
+   */
+  async getAll(): Promise<Order[]> {
+    return await this.orderModel.find({}).sort({ createdAt: 'descending' }).exec();
+  }
+
+  /**
    * Cancel an order by id
    * Sets status of the order to Cancelled if it is found
    * Throw EntityNotFound if order does not exist
@@ -82,7 +89,7 @@ export class OrderService {
   private createPaymentJob(order: Order) {
     this.schedule.scheduleTimeoutJob(
       `create-payment-job-${order.id}`,
-      2000,
+      5000,
       async () => {
         this.httpService
           .post(`http://${host}:${port}/payments`, {
@@ -117,7 +124,7 @@ export class OrderService {
     }
     this.schedule.scheduleTimeoutJob(
       `confirm-delivery-job-${order.id}`,
-      2000,
+      5000,
       async () => {
         order.status = OrderStatus.DELIVERED;
         await this.updateOrderStatusById(order.id, order.status);

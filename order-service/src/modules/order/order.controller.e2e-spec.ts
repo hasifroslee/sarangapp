@@ -42,20 +42,32 @@ describe('Orders', () => {
         });
     });
 
-    it('order status should transition to CONFIRMED or CANCELLED after 2000ms', async () => {
-      await sleep(2100);
+    it('order status should transition to CONFIRMED or CANCELLED after 5000ms', async () => {
+      await sleep(5100);
       const order: OrderResponseDto = await getOrderById(app, createdOrder.id);
       expect(order.status === 'CONFIRMED' || order.status === 'CANCELLED').toBe(
         true,
       );
-    });
+    }, 6000);
 
-    it('order status should be in DELIVERED or CANCELLED after 4000ms', async () => {
-      await sleep(4100);
+    it('order status should be in DELIVERED or CANCELLED after 10000ms', async () => {
+      await sleep(10100);
       const order: OrderResponseDto = await getOrderById(app, createdOrder.id);
       expect(order.status === 'DELIVERED' || order.status === 'CANCELLED').toBe(
         true,
       );
+    }, 11000);
+  });
+
+  describe('/orders (GET)', () => {
+    it('should return a list of orders', async () => {
+        await createOrder(app);
+        return request(app.getHttpServer())
+            .get('/orders')
+            .expect(200)
+            .expect(response => {
+              expect(response.body.length).toBeGreaterThan(0);
+            });
     });
   });
 

@@ -6,4 +6,5 @@ export class OrderResponseDto {
   pump: number;
   price: number;
   status: OrderStatus;
+  createdAt: Date;
 }
