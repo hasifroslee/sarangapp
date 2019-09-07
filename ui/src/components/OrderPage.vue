@@ -19,7 +19,6 @@ import { Component, Vue } from "vue-property-decorator";
 import { host, port } from "../../configs/order.service.config";
 import CreateOrder from "./CreateOrder.vue";
 import OrderCard from "./OrderCard.vue";
-import axios from "axios";
 
 @Component({
   components: {
@@ -41,14 +40,17 @@ export default class OrderPage extends Vue {
   }
 
   fetchOrdersList() {
-    axios.get(`http://${host}:${port}/api/orders`).then(response => {
-      this.orders = response.data;
-      this.visibleOrders = this.calculateVisibleOrders(
-        response.data,
-        this.currentPage
-      );
-      this.rows = response.data.length;
-    });
+    fetch(`http://${host}:${port}/api/orders`)
+      .then(stream => stream.json())
+      .then((data: any) => {
+        console.log(data);
+        this.orders = data;
+        this.visibleOrders = this.calculateVisibleOrders(
+          data,
+          this.currentPage
+        );
+        this.rows = data.length;
+      });
   }
 
   pageChanged(page) {

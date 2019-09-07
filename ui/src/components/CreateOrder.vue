@@ -52,7 +52,6 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { host, port } from "../../configs/order.service.config";
-import axios from "axios";
 
 @Component
 export default class CreateOrder extends Vue {
@@ -77,7 +76,13 @@ export default class CreateOrder extends Vue {
       : (this.priceValidation = false);
 
     if (this.priceValidation && this.pumpValidation) {
-      await axios.post(`http://${host}:${port}/api/orders`, this.form);
+      await fetch(`http://${host}:${port}/api/orders`, {
+        method: "POST",
+        body: JSON.stringify(this.form),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
       this.showSave = false;
       this.showClear = true;
     } else {
