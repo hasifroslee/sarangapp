@@ -1,1 +1,1 @@
-export const port = process.env.appPort || '8000';
+export const isDev = process.env.ENVIRONMENT !== 'production';

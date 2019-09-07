@@ -3,11 +3,11 @@ import { HttpService, Injectable } from '@nestjs/common';
 import { InjectSchedule, Schedule } from 'nest-schedule';
 import { InjectModel } from '@nestjs/mongoose';
 import { Order } from './interfaces/order.interface';
-import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderStatus } from './schemas/order.schema';
 import { AxiosResponse } from 'axios';
 import { EntityNotFound } from '../../exceptions';
-import { paymentConfig } from '../../../configs';
+import { port, host } from '../../../configs/payment.config';
+import { CreateOrderDto } from './dto/create.order.dto';
 
 enum PaymentStatus {
   CONFIRMED = 'CONFIRMED',
@@ -29,7 +29,7 @@ export class OrderService {
   async create(createOrderDto: CreateOrderDto): Promise<Order> {
     const order = new this.orderModel(createOrderDto);
     await order.save();
-    this.createPayment(order);
+    this.createPaymentJob(order);
     return order;
   }
 
@@ -79,25 +79,32 @@ export class OrderService {
    * Call payment service to process order
    * @param order to be processed
    */
-  private createPayment(order: Order) {
-    this.httpService
-      .post(`http://${paymentConfig.host}:${paymentConfig.port}/payments`, {
-        ref: order.id,
-      })
-      .subscribe(async (response: AxiosResponse) => {
-        switch (response.data.status) {
-          case PaymentStatus.CONFIRMED:
-            order.status = OrderStatus.CONFIRMED;
-            this.confirmDeliveryJob(order);
-            break;
-          case PaymentStatus.DECLINED:
-            order.status = OrderStatus.CANCELLED;
-            break;
-          default:
-            return false;
-        }
-        await this.updateOrderStatusById(order.id, order.status);
-      });
+  private createPaymentJob(order: Order) {
+    this.schedule.scheduleTimeoutJob(
+      `create-payment-job-${order.id}`,
+      2000,
+      async () => {
+        this.httpService
+          .post(`http://${host}:${port}/payments`, {
+            ref: order.id,
+          })
+          .subscribe(async (response: AxiosResponse) => {
+            switch (response.data.status) {
+              case PaymentStatus.CONFIRMED:
+                order.status = OrderStatus.CONFIRMED;
+                this.confirmDeliveryJob(order);
+                break;
+              case PaymentStatus.DECLINED:
+                order.status = OrderStatus.CANCELLED;
+                break;
+              default:
+                return false;
+            }
+            await this.updateOrderStatusById(order.id, order.status);
+          });
+        return true;
+      },
+    );
   }
 
   /**
@@ -110,7 +117,7 @@ export class OrderService {
     }
     this.schedule.scheduleTimeoutJob(
       `confirm-delivery-job-${order.id}`,
-      5000,
+      2000,
       async () => {
         order.status = OrderStatus.DELIVERED;
         await this.updateOrderStatusById(order.id, order.status);

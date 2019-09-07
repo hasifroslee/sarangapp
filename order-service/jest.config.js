@@ -14,6 +14,6 @@ module.exports = {
   ],
   testMatch: [
     "**/__tests__/**/*.[jt]s?(x)",
-    "**/?(*.)+(spec|test).[jt]s?(x)"
+    "**/?(*.)+(e2e-spec|spec|test).[jt]s?(x)"
   ]
 };

@@ -9,7 +9,7 @@ build:
 deploy:
   kubectl:
     manifests:
-    - kubernetes-manifests/order-service.yml
+    - kubernetes-manifests/*
 profiles:
 - name: gcb
   build:

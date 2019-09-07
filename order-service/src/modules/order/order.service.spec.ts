@@ -4,7 +4,7 @@ import { OrderService } from './order.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { HttpService } from '@nestjs/common';
 import { ScheduleModule } from 'nest-schedule';
-import {OrderSchema, OrderStatus} from './schemas/order.schema';
+import { OrderSchema, OrderStatus } from './schemas/order.schema';
 import mockingoose from 'mockingoose';
 
 describe('OrderService', () => {
@@ -53,30 +53,30 @@ describe('OrderService', () => {
       mockingoose(orderModel).toReturn({}, 'save');
       const result = await service.create(createOrder);
       expect(result).toMatchObject({
-          _id: expect.anything(),
-          user: '1',
-          pump: 12,
-          price: 40,
-          status: 'CREATED',
+        _id: expect.anything(),
+        user: '1',
+        pump: 12,
+        price: 40,
+        status: 'CREATED',
       });
     });
   });
 
   describe('findById', () => {
     it('should return order with matching id', async () => {
-        mockingoose(orderModel).toReturn(mockOrder, 'findOne');
-        const result = await service.findById(mockOrder._id);
-        expect(result).toMatchObject(mockOrder);
+      mockingoose(orderModel).toReturn(mockOrder, 'findOne');
+      const result = await service.findById(mockOrder._id);
+      expect(result).toMatchObject(mockOrder);
     });
   });
 
   describe('cancelById', () => {
-      it('should update status of order with matching id to CANCELLED', async () => {
-          mockingoose(orderModel).toReturn(mockOrder, 'findOneAndUpdate');
-          mockOrder.status = OrderStatus.CANCELLED;
-          mockingoose(orderModel).toReturn(mockOrder, 'save');
-          const result = await service.cancelById(mockOrder._id);
-          expect(result).toMatchObject(mockOrder);
-      });
+    it('should update status of order with matching id to CANCELLED', async () => {
+      mockingoose(orderModel).toReturn(mockOrder, 'findOneAndUpdate');
+      mockOrder.status = OrderStatus.CANCELLED;
+      mockingoose(orderModel).toReturn(mockOrder, 'save');
+      const result = await service.cancelById(mockOrder._id);
+      expect(result).toMatchObject(mockOrder);
+    });
   });
 });

@@ -1,15 +1,25 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { OrderService } from './order.service';
-import { CreateOrderDto } from './dto/create-order.dto';
 import { HttpResponse } from '../../utils/http-response';
-import { GetOrderDto } from './dto/get-order.dto';
+import { CreateOrderDto } from './dto/create.order.dto';
+import { OrderResponseDto } from './dto/order.response.dto';
 
 @Controller('orders')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Post()
-  async create(@Body() body: CreateOrderDto): Promise<GetOrderDto> {
+  @HttpCode(HttpStatus.OK)
+  async create(@Body() body: CreateOrderDto): Promise<OrderResponseDto> {
     try {
       const result = await this.orderService.create(body);
       return HttpResponse.success(result);
@@ -19,7 +29,8 @@ export class OrderController {
   }
 
   @Get(':id')
-  async findById(@Param('id') id: string): Promise<GetOrderDto> {
+  @HttpCode(HttpStatus.OK)
+  async findById(@Param('id') id: string): Promise<OrderResponseDto> {
     try {
       const result = await this.orderService.findById(id);
       return HttpResponse.success(result);
@@ -29,7 +40,8 @@ export class OrderController {
   }
 
   @Put(':id/cancel')
-  async cancelById(@Param('id') id: string): Promise<GetOrderDto> {
+  @HttpCode(HttpStatus.OK)
+  async cancelById(@Param('id') id: string): Promise<OrderResponseDto> {
     try {
       const result = await this.orderService.cancelById(id);
       return HttpResponse.success(result);

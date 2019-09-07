@@ -1,11 +1,12 @@
 import { EntityAlreadyExists, EntityNotFound } from '../exceptions';
 import { HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { Order } from '../modules/order/interfaces/order.interface';
+import { OrderResponseDto } from '../modules/order/dto/order.response.dto';
 
 export class HttpResponse {
-  static success(data: Order) {
+  static success(data: Order): OrderResponseDto {
     return {
-      id: data.id.toString(),
+      id: data.id,
       user: data.user,
       pump: data.pump,
       price: data.price,

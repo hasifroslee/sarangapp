@@ -1,33 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: orderservice
+  name: paymentservice
 spec:
   selector:
     matchLabels:
-      app: orderservice
+      app: paymentservice
   template:
     metadata:
       labels:
-        app: orderservice
+        app: paymentservice
     spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: orderservice
-        env:
-        - name: MONGO_HOST
-          value: sarang-rj8ni.gcp.mongodb.net
-        - name: MONGO_USERNAME
-          value: vivaldi
-        - name: MONGO_PASSWORD
-          value: Y3t7bP9bT8BB6n2u
-        - name: MONGO_DB
-          value: orders
-        - name: ENVIRONMENT
-          value: production
-        - name: PAYMENT_HOST
-          value: paymentservice
+        image: paymentservice
         ports:
         - containerPort: 8080
         resources:
@@ -41,7 +28,7 @@ spec:
           httpGet:
             scheme: HTTP
             path: /
-            port: 8080
+            port: 9090
           initialDelaySeconds: 20
           periodSeconds: 10
           successThreshold: 1
@@ -50,20 +37,20 @@ spec:
           httpGet:
             scheme: HTTP
             path: /
-            port: 8080
+            port: 9090
           initialDelaySeconds: 20
           periodSeconds: 15
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: orderservice
+  name: paymentservice
 spec:
   type: ClusterIP
   selector:
-    app: orderservice
+    app: paymentservice
   ports:
   - name: http
-    port: 8080
-    targetPort: 8080
+    port: 9090
+    targetPort: 9090
     protocol: TCP

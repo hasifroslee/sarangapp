@@ -1,2 +1,2 @@
-export const port = process.env.paymentPort || 3001;
-export const host = process.env.paymentHost || 'localhost';
+export const host = process.env.PAYMENT_HOST || 'localhost';
+export const port = process.env.PAYMENT_PORT || 9090;

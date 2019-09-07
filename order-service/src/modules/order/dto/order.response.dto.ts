@@ -1,6 +1,6 @@
 import { OrderStatus } from '../schemas/order.schema';
 
-export class GetOrderDto {
+export class OrderResponseDto {
   id: string;
   user: string;
   pump: number;
