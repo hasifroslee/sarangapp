@@ -47,11 +47,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: orderservice
+  name: sarangui
 spec:
   type: NodePort
   selector:
-    app: orderservice
+    app: sarangui
   ports:
   - name: http
     port: 7070
