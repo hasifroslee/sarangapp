@@ -15,11 +15,8 @@ spec:
       containers:
       - name: server
         image: sarangui
-        env:
-        - name: ORDER_HOST
-          value: orderservice
         ports:
-        - containerPort: 7070
+        - containerPort: 80
         resources:
           requests:
             cpu: 200m
@@ -38,6 +35,6 @@ spec:
     app: sarangui
   ports:
   - name: http
-    port: 7070
-    targetPort: 7070
+    port: 80
+    targetPort: 80
     protocol: TCP

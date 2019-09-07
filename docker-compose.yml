@@ -6,7 +6,7 @@ services:
     build:
       context: ./ui
     ports:
-    - "7070:7070"
+    - "7070:80"
     environment:
       ORDER_HOST: host.docker.internal
     tty: true

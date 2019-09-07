@@ -1,8 +1,6 @@
-FROM node:12-alpine
+FROM node:12-alpine as build
 
 ENV NODE_ENV production
-
-RUN npm install -g http-server
 
 WORKDIR /app
 
@@ -14,5 +12,10 @@ COPY . .
 
 RUN npm run build
 
-EXPOSE 7070
-CMD [ "http-server", "-p 7070", "dist" ]
+FROM nginx:stable-alpine
+
+COPY --from=build /app/dist /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD [ "nginx", "-g", "daemon off;" ]
