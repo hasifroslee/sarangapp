@@ -17,11 +17,20 @@ spec:
         image: orderservice
         env:
         - name: MONGO_HOST
-          value: sarang-rj8ni.gcp.mongodb.net
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: host
         - name: MONGO_USERNAME
-          value: vivaldi
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: username
         - name: MONGO_PASSWORD
-          value: Y3t7bP9bT8BB6n2u
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: password
         - name: MONGO_DB
           value: orders
         - name: ENVIRONMENT
