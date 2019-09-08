@@ -82,7 +82,7 @@ export class OrderService {
           'Order with DELIVERED status cannot be cancelled',
         );
       default:
-        return order;
+        throw new NotCancellable('Order is already at CANCELLED status');
     }
     order.status = OrderStatus.CANCELLED;
     return await order.save();

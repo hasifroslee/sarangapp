@@ -17,7 +17,7 @@ export default class CancelOrder extends Vue {
 
   status = {
     showSuccess: false,
-    success: "Order status is or will move to CANCELLED",
+    success: "Order status will move to CANCELLED",
     showError: false,
     error: ""
   };

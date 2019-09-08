@@ -16,7 +16,7 @@
                 >
                 <b-col lg="2" md="2" sm="auto"
                   ><font-awesome-icon icon="money-bill-alt" /> :
-                  {{ order.price }}</b-col
+                  {{ (Math.floor(order.price * 100) / 100).toFixed(2) }}</b-col
                 >
                 <b-col lg="2" md="2" sm="auto"
                   ><font-awesome-icon icon="gas-pump" /> : #{{
