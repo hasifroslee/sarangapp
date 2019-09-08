@@ -8,6 +8,7 @@
               <b-form-input
                 id="form-input-pump"
                 type="number"
+                :disabled="disableSave"
                 :state="pumpValidation"
                 v-model="form.pump"
               ></b-form-input>
@@ -21,6 +22,7 @@
               <b-form-input
                 id="form-input-price"
                 type="number"
+                :disabled="disableSave"
                 :state="priceValidation"
                 v-model="form.price"
               ></b-form-input>
@@ -46,14 +48,6 @@
               >Clear</b-button
             >
           </b-col>
-          <b-col cols="12" class="mt-2">
-            <b-alert v-model="showError" variant="danger" dismissible>
-              {{ error }}
-            </b-alert>
-            <b-alert v-model="showSuccess" variant="success" dismissible>
-              {{ success }}
-            </b-alert>
-          </b-col>
         </b-row>
       </b-container>
     </b-form>
@@ -61,11 +55,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-property-decorator";
 import { protocol, host, port } from "../../configs/order.service.config";
+import { Status } from "../interfaces/status";
 
 @Component
 export default class CreateOrder extends Vue {
+  @Prop() setStatus: (status: Status) => any;
+
   form = {
     pump: undefined,
     price: undefined
@@ -75,10 +72,12 @@ export default class CreateOrder extends Vue {
   showSave = true;
   disableSave = false;
   showClear = false;
-  showError = false;
-  error = "Oops. Something went wrong.";
-  showSuccess = false;
-  success = "Order created, you should see it soon.";
+  status = {
+    showError: false,
+    error: "Oops. Something went wrong.",
+    showSuccess: false,
+    success: "Order created, you should see it soon."
+  };
 
   async submitForm() {
     this.disableSave = true;
@@ -97,12 +96,25 @@ export default class CreateOrder extends Vue {
         headers: {
           "Content-Type": "application/json"
         }
-      }).then(() => {
-          this.showSuccess = true;
       })
-        .catch(() => {
-        this.showError = true;
-      });
+        .then(response => {
+          if (response.ok) {
+            this.setStatus({ ...this.status, showSuccess: true });
+          } else {
+            this.setStatus({
+              ...this.status,
+              showError: true,
+              error: response.statusText
+            });
+          }
+        })
+        .catch(error => {
+          this.setStatus({
+            ...this.status,
+            showError: true,
+            error: error.message
+          });
+        });
       this.showSave = false;
       this.showClear = true;
     } else {
@@ -120,7 +132,7 @@ export default class CreateOrder extends Vue {
     this.showClear = false;
     this.showSave = true;
     this.disableSave = false;
-    this.showSuccess = false;
+    this.setStatus({ ...this.status, showSuccess: false });
   }
 }
 </script>

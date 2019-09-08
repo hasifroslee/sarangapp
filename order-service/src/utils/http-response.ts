@@ -1,4 +1,8 @@
-import { EntityAlreadyExists, EntityNotFound } from '../exceptions';
+import {
+  EntityAlreadyExists,
+  EntityNotFound,
+  NotCancellable,
+} from '../exceptions';
 import { HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { Order } from '../modules/order/interfaces/order.interface';
 import { OrderResponseDto } from '../modules/order/dto/order.response.dto';
@@ -34,6 +38,8 @@ export class HttpResponse {
         throw new HttpException(e.message, HttpStatus.CONFLICT);
       case EntityNotFound:
         throw new HttpException(e.message, HttpStatus.NOT_FOUND);
+      case NotCancellable:
+        throw new HttpException(e.message, HttpStatus.FORBIDDEN);
       default:
         Logger.error(e.message, e);
         throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);

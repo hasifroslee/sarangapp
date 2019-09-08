@@ -10,23 +10,26 @@
           >
             <b-container>
               <b-row>
-                <b-col align="left"
+                <b-col lg="3" md="3" sm="auto"
                   ><font-awesome-icon icon="user-injured" /> :
                   {{ order.user }}</b-col
                 >
-                <b-col
+                <b-col lg="2" md="2" sm="auto"
                   ><font-awesome-icon icon="money-bill-alt" /> :
                   {{ order.price }}</b-col
                 >
-                <b-col
+                <b-col lg="2" md="2" sm="auto"
                   ><font-awesome-icon icon="gas-pump" /> : #{{
                     order.pump
                   }}</b-col
                 >
-                <b-col align="right"
+                <b-col lg="3" md="3" sm="auto"
                   ><font-awesome-icon :icon="statusIcon(order)" /> :
                   {{ order.status }}</b-col
                 >
+                <b-col lg="2" md="2" sm="auto">
+                  <CancelOrder :setStatus="setStatus" :order="order" />
+                </b-col>
               </b-row>
             </b-container>
           </b-card>
@@ -38,12 +41,20 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
+import CancelOrder from "./CancelOrder.vue";
+import { Status } from "../interfaces/status";
+import { Order } from "../interfaces/order";
 
-@Component
+@Component({
+  components: {
+    CancelOrder
+  }
+})
 export default class OrderCard extends Vue {
-  @Prop() private orders!: [object];
+  @Prop() private orders!: [Order];
+  @Prop() setStatus?: (status: Status) => any;
 
-  statusIcon(order) {
+  statusIcon(order: Order) {
     switch (order.status) {
       case "CREATED":
         return "plus-circle";
@@ -51,12 +62,14 @@ export default class OrderCard extends Vue {
         return "play-circle";
       case "DELIVERED":
         return "check-circle";
+      case "DECLINED":
+        return "exclamation-circle";
       default:
         return "times-circle";
     }
   }
 
-  bgVariant(order) {
+  bgVariant(order: Order) {
     switch (order.status) {
       case "CREATED":
         return "primary";
@@ -64,6 +77,8 @@ export default class OrderCard extends Vue {
         return "info";
       case "DELIVERED":
         return "success";
+      case "DECLINED":
+        return "warning";
       default:
         return "danger";
     }

@@ -8,7 +8,9 @@ import {
   faCheckCircle,
   faTimesCircle,
   faPlusCircle,
-  faPlayCircle
+  faPlayCircle,
+  faExclamationCircle,
+  faTrashAlt
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
@@ -19,7 +21,9 @@ library.add(
   faCheckCircle,
   faTimesCircle,
   faPlusCircle,
-  faPlayCircle
+  faPlayCircle,
+  faExclamationCircle,
+  faTrashAlt
 );
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 Vue.config.productionTip = false;

@@ -4,6 +4,7 @@ import { v4 as uuid } from 'uuid';
 export enum OrderStatus {
   CREATED = 'CREATED',
   CONFIRMED = 'CONFIRMED',
+  DECLINED = 'DECLINED',
   DELIVERED = 'DELIVERED',
   CANCELLED = 'CANCELLED',
 }

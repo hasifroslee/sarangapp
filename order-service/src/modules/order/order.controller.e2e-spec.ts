@@ -24,7 +24,7 @@ describe('Orders', () => {
 
     it('should create an order with status CREATED', async () => {
       const order: CreateOrderDto = {
-        user: faker.random.word(),
+        user: faker.internet.userName(),
         pump: faker.random.number(),
         price: faker.random.number(),
       };
@@ -42,10 +42,10 @@ describe('Orders', () => {
         });
     });
 
-    it('order status should transition to CONFIRMED or CANCELLED after 5000ms', async () => {
+    it('order status should transition to CONFIRMED or DECLINED after 5000ms', async () => {
       await sleep(5100);
       const order: OrderResponseDto = await getOrderById(app, createdOrder.id);
-      expect(order.status === 'CONFIRMED' || order.status === 'CANCELLED').toBe(
+      expect(order.status === 'CONFIRMED' || order.status === 'DECLINED').toBe(
         true,
       );
     }, 6000);
@@ -61,13 +61,13 @@ describe('Orders', () => {
 
   describe('/orders (GET)', () => {
     it('should return a list of orders', async () => {
-        await createOrder(app);
-        return request(app.getHttpServer())
-            .get('/orders')
-            .expect(200)
-            .expect(response => {
-              expect(response.body.length).toBeGreaterThan(0);
-            });
+      await createOrder(app);
+      return request(app.getHttpServer())
+        .get('/orders')
+        .expect(200)
+        .expect(response => {
+          expect(response.body.length).toBeGreaterThan(0);
+        });
     });
   });
 

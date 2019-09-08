@@ -6,6 +6,7 @@ import { HttpService } from '@nestjs/common';
 import { ScheduleModule } from 'nest-schedule';
 import { OrderSchema, OrderStatus } from './schemas/order.schema';
 import mockingoose from 'mockingoose';
+import { NotCancellable } from '../../exceptions';
 
 describe('OrderService', () => {
   let service: OrderService;
@@ -81,10 +82,19 @@ describe('OrderService', () => {
   describe('cancelById', () => {
     it('should update status of order with matching id to CANCELLED', async () => {
       mockingoose(orderModel).toReturn(mockOrder, 'findOneAndUpdate');
-      mockOrder.status = OrderStatus.CANCELLED;
+      mockOrder.status = OrderStatus.CONFIRMED;
       mockingoose(orderModel).toReturn(mockOrder, 'save');
       const result = await service.cancelById(mockOrder._id);
       expect(result).toMatchObject(mockOrder);
+    });
+
+    it('should throw NotCancellable exception if order status is DELIVERED', async () => {
+      mockingoose(orderModel).toReturn(mockOrder, 'findOneAndUpdate');
+      mockOrder.status = OrderStatus.DELIVERED;
+      mockingoose(orderModel).toReturn(mockOrder, 'save');
+      await expect(service.cancelById(mockOrder._id)).rejects.toThrow(
+        NotCancellable,
+      );
     });
   });
 });

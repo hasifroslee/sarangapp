@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './modules/app/app.module';
-import {authMiddleware} from './middlewares/auth.middleware';
+import { authMiddleware } from './middlewares/auth.middleware';
 import * as express from 'express';
 
 async function bootstrap() {

@@ -5,8 +5,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Order } from './interfaces/order.interface';
 import { OrderStatus } from './schemas/order.schema';
 import { AxiosResponse } from 'axios';
-import { EntityNotFound } from '../../exceptions';
-import { port, host } from '../../../configs/payment.service.config';
+import { EntityNotFound, NotCancellable } from '../../exceptions';
+import { host, port } from '../../../configs/payment.service.config';
 import { CreateOrderDto } from './dto/create.order.dto';
 
 enum PaymentStatus {
@@ -50,7 +50,10 @@ export class OrderService {
    * Get all orders
    */
   async getAll(): Promise<Order[]> {
-    return await this.orderModel.find({}).sort({ createdAt: 'descending' }).exec();
+    return await this.orderModel
+      .find({})
+      .sort({ createdAt: 'descending' })
+      .exec();
   }
 
   /**
@@ -63,6 +66,23 @@ export class OrderService {
     const order = await this.orderModel.findById(id).exec();
     if (!order) {
       throw new EntityNotFound(`Order with id: ${id} does not exist`);
+    }
+    switch (order.status) {
+      case OrderStatus.CREATED:
+        this.schedule.cancelJob(this.getPaymentJobKey(order.id));
+        break;
+      case OrderStatus.CONFIRMED:
+        this.schedule.cancelJob(this.getConfirmDeliveryJobKey(order.id));
+        break;
+      case OrderStatus.DECLINED:
+        this.schedule.cancelJob(this.getConfirmDeliveryJobKey(order.id));
+        break;
+      case OrderStatus.DELIVERED:
+        throw new NotCancellable(
+          'Order with DELIVERED status cannot be cancelled',
+        );
+      default:
+        return order;
     }
     order.status = OrderStatus.CANCELLED;
     return await order.save();
@@ -83,14 +103,14 @@ export class OrderService {
   }
 
   /**
-   * Call payment service to process order
+   * Schedule a job to call payment service to process order
    * @param order to be processed
    */
   private createPaymentJob(order: Order) {
     this.schedule.scheduleTimeoutJob(
       `create-payment-job-${order.id}`,
       5000,
-      async () => {
+      () => {
         this.httpService
           .post(`http://${host}:${port}/payments`, {
             ref: order.id,
@@ -102,7 +122,8 @@ export class OrderService {
                 this.confirmDeliveryJob(order);
                 break;
               case PaymentStatus.DECLINED:
-                order.status = OrderStatus.CANCELLED;
+                order.status = OrderStatus.DECLINED;
+                this.confirmDeliveryJob(order);
                 break;
               default:
                 return false;
@@ -115,21 +136,43 @@ export class OrderService {
   }
 
   /**
-   * Schedule a one off job to update status of a Confirmed order to Delivered
+   * Schedule a one off job to update status of a Confirmed/Declined order to Delivered/Cancelled
    * @param order to be marked Delivered
    */
   private confirmDeliveryJob(order: Order) {
-    if (order.status !== OrderStatus.CONFIRMED) {
-      return;
-    }
     this.schedule.scheduleTimeoutJob(
       `confirm-delivery-job-${order.id}`,
       5000,
       async () => {
-        order.status = OrderStatus.DELIVERED;
+        switch (order.status) {
+          case OrderStatus.CONFIRMED:
+            order.status = OrderStatus.DELIVERED;
+            break;
+          case OrderStatus.DECLINED:
+            order.status = OrderStatus.CANCELLED;
+            break;
+          default:
+            return false;
+        }
         await this.updateOrderStatusById(order.id, order.status);
         return true;
       },
     );
+  }
+
+  /**
+   * Get the paymentJob key for an order
+   * @param id of the order
+   */
+  private getPaymentJobKey(id: string) {
+    return `create-payment-job-${id}`;
+  }
+
+  /**
+   * Get confirmDeliveryJob key for an order
+   * @param id of the order
+   */
+  private getConfirmDeliveryJobKey(id: string) {
+    return `confirm-delivery-job-${id}`;
   }
 }

@@ -1,27 +1,34 @@
 <template>
   <div>
-      <CreateOrder />
+    <CreateOrder :setStatus="setStatus" />
 
-      <b-container>
+    <b-container>
       <b-row>
         <b-col>
-          <b-alert v-model="showError" variant="danger" dismissible>
-            {{ error }}
+          <b-alert v-model="status.showError" variant="danger" dismissible>
+            {{ status.error }}
+          </b-alert>
+          <b-alert v-model="status.showSuccess" variant="success" dismissible>
+            {{ status.success }}
           </b-alert>
         </b-col>
       </b-row>
-      </b-container>
+    </b-container>
 
-      <OrderCard id="order-cards" :orders="visibleOrders" />
+    <OrderCard
+      :setStatus="setStatus"
+      id="order-cards"
+      :orders="visibleOrders"
+    />
 
-      <b-pagination
-        v-if="!showError"
-        @change="pageChanged"
-        v-model="currentPage"
-        :total-rows="rows"
-        :per-page="perPage"
-        align="center"
-      ></b-pagination>
+    <b-pagination
+      v-if="!status.showError"
+      @change="pageChanged"
+      v-model="currentPage"
+      :total-rows="rows"
+      :per-page="perPage"
+      align="center"
+    ></b-pagination>
   </div>
 </template>
 
@@ -30,6 +37,7 @@ import { Component, Vue } from "vue-property-decorator";
 import { protocol, host, port } from "../../configs/order.service.config";
 import CreateOrder from "./CreateOrder.vue";
 import OrderCard from "./OrderCard.vue";
+import { Status } from "../interfaces/status";
 
 @Component({
   components: {
@@ -44,8 +52,16 @@ export default class OrderPage extends Vue {
   visibleOrders = null;
   timer = 0;
   rows = null;
-  showError = false;
-  error = "Oops. Something went wrong.";
+  status = {
+    showError: false,
+    error: "Oops. Something went wrong.",
+    showSuccess: false,
+    success: "Order created, you should see it soon."
+  };
+
+  setStatus(status: Status) {
+    this.status = status;
+  }
 
   created() {
     this.fetchOrdersList();
@@ -65,7 +81,7 @@ export default class OrderPage extends Vue {
         this.rows = data.length;
       })
       .catch(() => {
-        this.showError = true;
+        this.status.showError = true;
         this.timer = 0;
       });
   }
