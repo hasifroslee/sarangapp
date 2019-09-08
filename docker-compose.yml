@@ -5,10 +5,9 @@ services:
   ui:
     build:
       context: ./ui
+      dockerfile: Dockerfile.dev
     ports:
-    - "7070:80"
-    environment:
-      ORDER_HOST: host.docker.internal
+    - "7070:7070"
     tty: true
     container_name: sarangui
   order-service:

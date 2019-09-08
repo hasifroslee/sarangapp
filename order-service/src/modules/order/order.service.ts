@@ -69,13 +69,13 @@ export class OrderService {
     }
     switch (order.status) {
       case OrderStatus.CREATED:
-        this.schedule.cancelJob(this.getPaymentJobKey(order.id));
+        this.cancelPaymentJob(order.id);
         break;
-      case OrderStatus.CONFIRMED:
-        this.schedule.cancelJob(this.getConfirmDeliveryJobKey(order.id));
+        case OrderStatus.CONFIRMED:
+        this.cancelConfirmDeliveryJob(order.id);
         break;
       case OrderStatus.DECLINED:
-        this.schedule.cancelJob(this.getConfirmDeliveryJobKey(order.id));
+        this.cancelConfirmDeliveryJob(order.id);
         break;
       case OrderStatus.DELIVERED:
         throw new NotCancellable(
@@ -161,18 +161,18 @@ export class OrderService {
   }
 
   /**
-   * Get the paymentJob key for an order
+   * Cancel paymentJob for an order
    * @param id of the order
    */
-  private getPaymentJobKey(id: string) {
-    return `create-payment-job-${id}`;
+  private cancelPaymentJob(id: string) {
+    this.schedule.cancelJob(`create-payment-job-${id}`);
   }
 
   /**
-   * Get confirmDeliveryJob key for an order
+   * Cancel confirmDeliveryJob for an order
    * @param id of the order
    */
-  private getConfirmDeliveryJobKey(id: string) {
-    return `confirm-delivery-job-${id}`;
+  private cancelConfirmDeliveryJob(id: string) {
+    this.schedule.cancelJob(`confirm-delivery-job-${id}`);
   }
 }

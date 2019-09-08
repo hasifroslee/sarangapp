@@ -20,7 +20,7 @@
                 >
                 <b-col lg="2" md="2" sm="auto"
                   ><font-awesome-icon icon="gas-pump" /> : #{{
-                    order.pump
+                    Math.trunc(order.pump)
                   }}</b-col
                 >
                 <b-col lg="3" md="3" sm="auto"

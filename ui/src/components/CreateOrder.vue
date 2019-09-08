@@ -104,7 +104,7 @@ export default class CreateOrder extends Vue {
             this.setStatus({
               ...this.status,
               showError: true,
-              error: response.statusText
+              error: 'Price and Pump# must be at least 1 and less than 500'
             });
           }
         })
