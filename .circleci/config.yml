@@ -1,0 +1,12 @@
+version: 2
+jobs:
+  build:
+    machine: true
+    working_directory: ~/sarangapp
+
+    steps:
+      - checkout
+      - run: docker-compose up -d
+      - run: docker-compose exec payment-service npm run test
+      - run: docker-compose exec order-service npm run test:cov
+
