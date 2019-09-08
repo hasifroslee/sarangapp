@@ -4,9 +4,16 @@ metadata:
   name: ingress
   annotations:
     kubernetes.io/ingress.global-static-ip-name: sarangapp-ip
+    certmanager.k8s.io/cluster-issuer: letsencrypt-prod
+    certmanager.k8s.io/acme-http01-edit-in-place: "true"
 spec:
+  tls:
+  - hosts:
+    - hasif.exoot.co
+    secretName: hasif-exoot-co-tls
   rules:
-  - http:
+  - host: hasif.exoot.co
+    http:
       paths:
       - path: /*
         backend:

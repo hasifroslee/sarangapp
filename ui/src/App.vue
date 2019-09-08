@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <img class="mb-5" alt="Hydroganate" src="./assets/logo.png" />
+    <b-img class="mb-5" alt="Hydroganate" src="./assets/logo.png" fluid></b-img>
     <OrderPage />
   </div>
 </template>

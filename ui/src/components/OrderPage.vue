@@ -1,22 +1,33 @@
 <template>
   <div>
-    <b-container>
       <CreateOrder />
+
+      <b-container>
+      <b-row>
+        <b-col>
+          <b-alert v-model="showError" variant="danger" dismissible>
+            {{ error }}
+          </b-alert>
+        </b-col>
+      </b-row>
+      </b-container>
+
       <OrderCard id="order-cards" :orders="visibleOrders" />
+
       <b-pagination
+        v-if="!showError"
         @change="pageChanged"
         v-model="currentPage"
         :total-rows="rows"
         :per-page="perPage"
         align="center"
       ></b-pagination>
-    </b-container>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { host, port } from "../../configs/order.service.config";
+import { protocol, host, port } from "../../configs/order.service.config";
 import CreateOrder from "./CreateOrder.vue";
 import OrderCard from "./OrderCard.vue";
 
@@ -33,6 +44,8 @@ export default class OrderPage extends Vue {
   visibleOrders = null;
   timer = 0;
   rows = null;
+  showError = false;
+  error = "Oops. Something went wrong.";
 
   created() {
     this.fetchOrdersList();
@@ -40,7 +53,7 @@ export default class OrderPage extends Vue {
   }
 
   fetchOrdersList() {
-    fetch(`http://${host}:${port}/api/orders`)
+    fetch(`${protocol}://${host}:${port}/api/orders`)
       .then(stream => stream.json())
       .then((data: any) => {
         console.log(data);
@@ -50,6 +63,10 @@ export default class OrderPage extends Vue {
           this.currentPage
         );
         this.rows = data.length;
+      })
+      .catch(() => {
+        this.showError = true;
+        this.timer = 0;
       });
   }
 
